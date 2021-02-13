@@ -8,6 +8,7 @@ fs.readFile('./input.txt', (err, data) => {
   const arr = str.split("\r\n"); // Array of lines
 
   let validPass = 0;
+  let newValidPass = 0;
 
   for (let line of arr) {
 
@@ -20,7 +21,14 @@ fs.readFile('./input.txt', (err, data) => {
     const charCount = elements[2].split(char).length - 1; // How many times char appears in the password
 
     if (charCount >= range[0] && charCount <= range[1]) validPass++;
+
+
+    // Challenge #2
+    if (elements[2][range[0] - 1] !== elements[2][range[1] - 1]) {
+      if (elements[2][range[0] - 1] === char || elements[2][range[1] - 1] === char) newValidPass++;
+    }
   }
 
-  console.log(validPass)
+  console.log(`\nOld validation: ${validPass} passwords`);
+  console.log(`New validation: ${newValidPass} passwords\n`);
 })
