@@ -1,4 +1,3 @@
-// -------------------- Part 1 --------------------
 const fs = require('fs');
 
 fs.readFile('./input.txt', (err, data) => {
@@ -42,6 +41,7 @@ fs.readFile('./input.txt', (err, data) => {
       row3: 0,
       row4: 0,
       row5: 0,
+      hasWon: false,
     }
     bingoCards.push({card: currentCard, cardScore});
     currentCard = [];
@@ -52,6 +52,7 @@ fs.readFile('./input.txt', (err, data) => {
   // console.log(bingoOrder)
 
   let wasWinnerAnounced = false;
+  let quantityOfWinners = 0;
   for (const currentNumber of bingoOrder) { // --------------------------------------- Bingo round
     for (const cardObj of bingoCards) { // ------------------------------------------- Check card
       for (let rowIndex = 0; rowIndex < cardObj.card.length; rowIndex++) { // -------- Check row
@@ -64,7 +65,8 @@ fs.readFile('./input.txt', (err, data) => {
             cardObj.cardScore[`row${rowIndex + 1}`]++;
             if (cardObj.cardScore[`col${colIndex + 1}`] === 5 ||
                 cardObj.cardScore[`row${rowIndex + 1}`] === 5) {
-              anounceWinner({card: cardObj.card, cardScore: cardObj.cardScore, winningNumber: number}); // -- Bingo!
+              // anounceWinner({card: cardObj.card, cardScore: cardObj.cardScore, winningNumber: number}); // -- Bingo!
+              anounceWinner(cardObj, number); // -- Bingo!
             }
           }
         }
@@ -72,24 +74,26 @@ fs.readFile('./input.txt', (err, data) => {
     }
   }
 
-  function anounceWinner(winner) {
+  function anounceWinner(winner, winningNumber) {
     if (!wasWinnerAnounced) {
-      console.log(winner);
-      wasWinnerAnounced = true;
-      calculateFinalScore(winner);
+      // wasWinnerAnounced = true; // Uncomment for part 1 solution
+      if (!winner.cardScore.hasWon) {
+        winner.cardScore.hasWon = true;
+        quantityOfWinners++;
+        // console.log(winner);
+        calculateFinalScore(winner, winningNumber);
+      }
     }
   }
 
-  function calculateFinalScore(winner) {
+  function calculateFinalScore(winner, winningNumber) {
     let unmarkedNumbersSum = 0;
     for (const row of winner.card) {
       for (const number of row) {
         if (number !== "x") unmarkedNumbersSum += parseInt(number);
       }
     }
-    console.log("Final score is " + (unmarkedNumbersSum * winner.winningNumber))
+    console.log({winningNumber, quantityOfWinners})
+    console.log("Final score is " + (unmarkedNumbersSum * winningNumber))
   }
 })
-
-
-// -------------------- Part 2 (TBD) --------------------
